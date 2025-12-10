@@ -200,11 +200,3 @@ GitHub: [https://github.com/ramirez-ai-labs](https://github.com/ramirez-ai-labs)
 LinkedIn: [https://linkedin.com/in/victor-hugo-ramirez-mids](https://linkedin.com/in/victor-hugo-ramirez-mids)
 
 ---
-
-# ✔️ Summary
-
-Yes — **the main README in the root should be the guide**.
-Each folder has **minimal local docs**, but the root README is the *story, index, and map*.
-This is industry standard and exactly what OpenAI reviewers expect.
-
----
