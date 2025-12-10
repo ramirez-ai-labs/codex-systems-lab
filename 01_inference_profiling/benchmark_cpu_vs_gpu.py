@@ -15,11 +15,11 @@ def run(device, runs=5, max_new_tokens=32):
     Load the model and tokenizer on the requested device, run several
     generations, and return the average time per run.
     """
-    # Load the tokenizer once for each run so the code path is explicit.
+    # Tokenizer: turns raw text into token ids the model understands.
     tokenizer = AutoTokenizer.from_pretrained(MODEL)
-    # Move the language model to the chosen device (CPU or GPU).
+    # Model: the neural network that predicts the next tokens.
     model = AutoModelForCausalLM.from_pretrained(MODEL).to(device)
-    # Tokenize the prompt text and move those tensors to the same device.
+    # Inputs: tokenized prompt tensors moved onto the same device as the model.
     inputs = tokenizer(PROMPT, return_tensors="pt").to(device)
 
     latencies = []
