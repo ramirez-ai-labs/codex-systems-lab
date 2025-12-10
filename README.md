@@ -208,13 +208,3 @@ Each folder has **minimal local docs**, but the root README is the *story, index
 This is industry standard and exactly what OpenAI reviewers expect.
 
 ---
-
-If you want, I can also generate:
-
-✅ A shorter README
-✅ A more narrative, resume-style README
-✅ A “research paper” style README
-or
-✅ README badges + visuals to make it stunning on GitHub
-
-Just tell me the style you want.
