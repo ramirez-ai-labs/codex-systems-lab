@@ -1,6 +1,5 @@
 """
 BEGINNER-FRIENDLY CPU vs GPU Inference Benchmark
-================================================
 
 This script shows how long it takes a small language model (DistilGPT-2)
 to generate text on different devices (CPU and GPU).
