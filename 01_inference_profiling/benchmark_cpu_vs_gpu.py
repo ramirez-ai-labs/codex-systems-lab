@@ -1,14 +1,67 @@
 """
+
+This script shows how long it takes a small language model (DistilGPT-2)
+to generate text on different devices (CPU and GPU).
+
+It is intentionally written with beginners in mind:
+- no compact Python shortcuts
+- simple variable names
+- step-by-step comments explaining *why* each line exists
+- gentle introduction to model loading, tokenization, and generation
+
+You can run this file directly:
+
+    python benchmark_cpu_vs_gpu.py
+
+If your machine has a GPU (NVIDIA + CUDA), the script will test both CPU and GPU.
+Otherwise, it will run only on the CPU.
 Small script that times how long a simple text generation task takes on each
 available device so beginners can see the difference between CPU and GPU.
 """
 
 import time
-from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
-MODEL = "distilgpt2"
-PROMPT = "def fibonacci(n):"
+# We use a very small model so beginners can experiment on any machine
+MODEL_NAME = "distilgpt2"
+
+# A short piece of code for the model to complete
+PROMPT_TEXT = "def fibonacci(n):"
+
+
+def measure_generation_time(device_name, number_of_runs=5, max_new_tokens=32):
+    """
+    Measure how long it takes the model to generate text on one device.
+
+    Parameters:
+        device_name (str): "cpu" or "cuda"
+        number_of_runs (int): how many times we repeat the measurement
+        max_new_tokens (int): how many new tokens the model should generate
+
+    Returns:
+        float: average number of seconds per generation
+    """
+
+    # ----------------------------------------------------------
+    # 1. Load the tokenizer (turns words into tokens)
+    # ----------------------------------------------------------
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+
+    # ----------------------------------------------------------
+    # 2. Load the model itself (the neural network)
+    # ----------------------------------------------------------
+    # .to(device_name) moves the model onto CPU or GPU
+    model = AutoModelForCausalLM.from_pretrained(MODEL_NAME)
+    model = model.to(device_name)
+
+    # ----------------------------------------------------------
+    # 3. Convert the prompt string into token IDs
+    # ----------------------------------------------------------
+    encoded_inputs = tokenizer(PROMPT_TEXT, return_tensors="pt")
+
+    # Move token IDs onto the same device as the model
+    encoded_inputs = encoded_inputs.to(device_name)
 
 def run(device, runs=5, max_new_tokens=32):
     """
@@ -39,6 +92,7 @@ def main():
         # Only add the GPU if PyTorch can see one on this machine.
         devices.append("cuda")
 
+    # Dictionary to store results
     results = {}
     for device in devices:
         # Measure the average latency for the current device.
