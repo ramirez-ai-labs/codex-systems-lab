@@ -1,0 +1,8 @@
+{"text": "def greet(name):\n    print(f\"Hello, {name}!\")"}
+{"text": "def reverse_list(items):\n    return items[::-1]"}
+{"text": "def is_even(number):\n    return number % 2 == 0"}
+{"text": "def sum_list(numbers):\n    total = 0\n    for n in numbers:\n        total += n\n    return total"}
+{"text": "class Counter:\n    def __init__(self):\n        self.count = 0\n\n    def increment(self):\n        self.count += 1"}
+{"text": "def square_numbers(numbers):\n    return [n * n for n in numbers]"}
+{"text": "def is_palindrome(text):\n    cleaned = text.lower().replace(' ', '')\n    return cleaned == cleaned[::-1]"}
+{"text": "def find_max(values):\n    max_value = values[0]\n    for v in values:\n        if v > max_value:\n            max_value = v\n    return max_value"}
