@@ -40,10 +40,11 @@ VALID_FILE = os.path.join(DATA_DIR, "validation.jsonl")
 
 OUTPUT_DIR = "outputs"
 
-MAX_SEQ_LENGTH = 128
-BATCH_SIZE = 2
-NUM_EPOCHS = 2
-LEARNING_RATE = 5e-5
+# Beginner-friendly hyperparameters.
+MAX_SEQ_LENGTH = 128     # cap each example at 128 tokens so padding/truncation stays cheap
+BATCH_SIZE = 2           # number of samples per optimizer step; tiny to fit on CPU
+NUM_EPOCHS = 2           # number of full passes over the dataset
+LEARNING_RATE = 5e-5     # step size for weight updates (stable default for GPT-style models)
 
 
 # ============================================================
@@ -183,13 +184,13 @@ def train():
     training_args = TrainingArguments(
         output_dir=OUTPUT_DIR,
         overwrite_output_dir=True,
-        num_train_epochs=NUM_EPOCHS,
-        per_device_train_batch_size=BATCH_SIZE,
+        num_train_epochs=NUM_EPOCHS,                 # two full passes keep runtime short
+        per_device_train_batch_size=BATCH_SIZE,      # small batch keeps RAM usage low
         per_device_eval_batch_size=BATCH_SIZE,
-        learning_rate=LEARNING_RATE,
+        learning_rate=LEARNING_RATE,                 # gentle updates to avoid divergence
         logging_steps=1,
-        save_strategy="no",   # no checkpoints
-        report_to="none",     # no W&B / TensorBoard
+        save_strategy="no",                         # disable checkpoints for simplicity
+        report_to="none",                           # silence TensorBoard/W&B integrations
     )
 
     # Ensure output directory exists
@@ -198,6 +199,8 @@ def train():
     # ----------------------------
     # Trainer
     # ----------------------------
+    # Hugging Face Trainer builds an AdamW optimizer under the hood,
+    # which is a standard choice for transformer fine-tuning tasks.
     trainer = Trainer(
         model=model,
         args=training_args,
@@ -217,7 +220,11 @@ def train():
     # ----------------------------
     print("\nSaving fine-tuned model...")
     
-    print("\nSaving fine-tuned model...")
+    # NOTE:
+    # Some CPU-only PyTorch + Transformers installs fail when saving models
+    # due to DTensor / distributed imports.
+    # This does NOT affect training correctness.
+    
 
     try:
         model.save_pretrained(OUTPUT_DIR, safe_serialization=False)
