@@ -3,7 +3,6 @@
 
 # 📊 `03_agentic_performance/RESULTS.md`
 
-```md
 # Agentic Performance — Results & Takeaways
 
 This document summarizes what we observed when running the agent performance
