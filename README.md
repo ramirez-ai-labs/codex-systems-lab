@@ -1,22 +1,22 @@
 # 📘 **codex-systems-lab**
 
-*A hands-on research and engineering lab exploring the systems, performance, and training foundations of AI coding models.*
+*A hands-on research and engineering lab exploring the systems, performance, and training foundations behind modern AI models and agentic workflows.*
 
-This repository contains a curated set of experiments designed to demonstrate the technical depth required for **OpenAI’s Research Engineer, Codex** role. It covers:
+This repository contains a curated set of experiments designed to demonstrate the technical depth expected in modern AI research and engineering work. It covers:
 
 * **Inference performance optimization**
-* **Light LLM fine-tuning for code generation**
-* **Agentic coding system behavior & latency profiling**
+* **Light LLM fine-tuning for code generation and task-specific adaptation**
+* **Agentic system behavior & latency profiling**
 * **Reproductions of research findings**
 * **Systems diagrams for LLM inference & agentic workflows**
 
-This lab blends **ML research**, **systems engineering**, and **developer-experience insights**—mirroring the full-stack thinking required to push the frontier of AI coding models.
+This lab blends **ML research**, **systems engineering**, and **developer-experience insights**—mirroring the full-stack thinking required to build and evaluate practical AI systems.
 
 ---
 
 # 🔍 **Why This Lab Exists**
 
-Modern AI coding systems (e.g., Codex, GPT-o series) combine:
+Modern AI systems for coding, assistance, and automation combine:
 
 * Large-scale model inference
 * Context routing and retrieval
@@ -169,7 +169,7 @@ Output tables & notes live in each folder’s `RESULTS.md`.
 
 # 🧠 **Skills Demonstrated**
 
-This repository highlights capabilities aligned with **Research Engineer, Codex**:
+This repository highlights capabilities valuable across **applied AI engineering and research roles**:
 
 * LLM inference mechanics
 * Model optimization and throughput diagnostics
@@ -196,6 +196,7 @@ This is an evolving lab. Future additions will include:
 
 **Victor Ramirez**
 AI Architect & Developer Experience Engineer
+Portfolio: [https://ramirezailabs.com/](https://ramirezailabs.com/)
 GitHub: [https://github.com/ramirez-ai-labs](https://github.com/ramirez-ai-labs)
 LinkedIn: [https://linkedin.com/in/victor-hugo-ramirez-mids](https://linkedin.com/in/victor-hugo-ramirez-mids)
 
