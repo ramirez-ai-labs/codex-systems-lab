@@ -28,7 +28,7 @@ codex-systems-lab/
 ├── 01_inference_profiling/          → Inference speed, batching, KV cache, quantization (measured, real hardware)
 ├── 02_light_finetuning/             → End-to-end LLM fine-tuning pipeline on Python code (complete, real before/after eval)
 ├── 03_agentic_performance/          → Agent loop benchmarks (part measured, part simulated — see below)
-├── 04_research_reproductions/       → paper_1 implemented (synthetic, real output), paper_2 planned
+├── 04_research_reproductions/       → paper_1 and paper_2 implemented (synthetic, real output)
 ├── 05_system_diagrams/              → Planned — not yet built
 └── README.md                        → This file
 ```
@@ -97,15 +97,21 @@ LoRA and functional-correctness testing are scoped as next steps, not yet implem
   doesn't measure a real system. Both docstrings call themselves simulations, but neither
   spells out as explicitly as `tool_latency_simulation.py` does that no real model is involved.
 
-## **04 — Research Reproductions** ⚠️ One implemented (synthetic), one planned
+## **04 — Research Reproductions** ✅ Both implemented (synthetic)
 
 `paper_1_edit_distance_vs_acceptance` is implemented: `replicate_experiment.ipynb` runs end
 to end (`jupyter nbconvert --to notebook --execute`) and `RESULTS.md` reports the real output
 — acceptance rate falls from 97.8% at very-low edit distance to 0.0% at high edit distance.
 This is a genuine measurement of a *simulation*, not of real developer behavior: the data is
 synthetic and the acceptance-probability curve is a hand-picked logistic function, not fit to
-any real dataset — `RESULTS.md` spells out that limitation explicitly. `paper_2_rag_scaling_laws`
-remains an empty scaffold — no spec, notebook, or results yet.
+any real dataset — `RESULTS.md` spells out that limitation explicitly.
+
+`paper_2_rag_scaling_laws` is also implemented: its notebook measures real Recall@k over a
+synthetic embedding corpus (recall rises with k but with diminishing returns, and drops
+sharply as corpus size grows), then layers a hand-picked "context dilution" function on top
+to simulate downstream answer accuracy, which peaks around k=10–50 and then falls off.
+`RESULTS.md` is explicit that only the recall measurement is real — the dilution/accuracy
+curve is invented, not fit to any real RAG system.
 
 ## **05 — Systems Diagrams** 📋 Planned
 
@@ -127,8 +133,8 @@ planned, not yet created.
 # 📬 **Roadmap**
 
 * Fix the quantization benchmark's model-size estimator (packed quantized weights aren't counted)
-* Fit paper_1's acceptance model to a real or published dataset instead of hand-picked constants
-* Build out `paper_2_rag_scaling_laws` and `05_system_diagrams`
+* Fit paper_1's acceptance model, and paper_2's dilution model, to real or published data instead of hand-picked constants
+* Build out `05_system_diagrams`
 * Add LoRA fine-tuning and functional-correctness testing to the fine-tuning lab
 
 ---
