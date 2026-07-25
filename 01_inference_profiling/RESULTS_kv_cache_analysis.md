@@ -19,7 +19,7 @@ This experiment shows how much faster a transformer model becomes after the keyâ
 ## Benchmark Command
 
 ```bash
-python 01_inference_profiling/kv_cache_analysis.py
+python 01_inference_profiling/benchmark_kv_cache_analysis.py
 ```
 
 ---
