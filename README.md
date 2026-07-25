@@ -86,12 +86,16 @@ LoRA and functional-correctness testing are scoped as next steps, not yet implem
 
 ## **03 — Agentic Performance** ⚠️ Part measured, part simulated
 
-* `agent_loop_benchmark.py` and `tool_latency_simulation.py` make real DistilGPT-2 inference
-  calls to measure think→act→reflect overhead and tool-latency dominance — genuine measurement.
+* `agent_loop_benchmark.py` makes real DistilGPT-2 inference calls to measure think→act→reflect
+  overhead — genuine measurement. `tool_latency_simulation.py` also makes real inference calls
+  for the "think" step, but stands in a fixed `time.sleep()` for the "tool" step instead of
+  calling a real tool — its own docstring says so explicitly ("This script does NOT call real
+  APIs"). So the LLM-side cost is measured; the tool-side cost is a constant, not measured.
 * `error_recovery_costs.py` and `retries_vs_quality_analysis.py` model retry/failure costs
-  using `random.uniform()` and `time.sleep()`, not a real model or real tool — this models the
-  *shape* of the cost tradeoff, it doesn't measure a real system. Both scripts are transparent
-  about this in their own docstrings.
+  using `random.uniform()` and `time.sleep()` for both the LLM and tool steps — no model or
+  tool is called at all, real or otherwise. This models the *shape* of the cost tradeoff, it
+  doesn't measure a real system. Both docstrings call themselves simulations, but neither
+  spells out as explicitly as `tool_latency_simulation.py` does that no real model is involved.
 
 ## **04 — Research Reproductions** 📋 Planned
 
