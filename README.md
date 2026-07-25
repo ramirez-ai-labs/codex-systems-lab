@@ -28,7 +28,7 @@ codex-systems-lab/
 ├── 01_inference_profiling/          → Inference speed, batching, KV cache, quantization (measured, real hardware)
 ├── 02_light_finetuning/             → End-to-end LLM fine-tuning pipeline on Python code (complete, real before/after eval)
 ├── 03_agentic_performance/          → Agent loop benchmarks (part measured, part simulated — see below)
-├── 04_research_reproductions/       → Scaffolded, one hypothesis writeup, no notebooks run yet
+├── 04_research_reproductions/       → paper_1 implemented (synthetic, real output), paper_2 planned
 ├── 05_system_diagrams/              → Planned — not yet built
 └── README.md                        → This file
 ```
@@ -97,14 +97,15 @@ LoRA and functional-correctness testing are scoped as next steps, not yet implem
   doesn't measure a real system. Both docstrings call themselves simulations, but neither
   spells out as explicitly as `tool_latency_simulation.py` does that no real model is involved.
 
-## **04 — Research Reproductions** 📋 Planned
+## **04 — Research Reproductions** ⚠️ One implemented (synthetic), one planned
 
-Two subfolder scaffolds exist. `paper_1_edit_distance_vs_acceptance` has a README and a
-`RESULTS.md`, but the latter is explicitly labeled as a hypothesis, not a finding — the
-notebook that would produce real numbers hasn't been implemented. `paper_2_rag_scaling_laws`
-is empty. (An earlier version of this repo had paper_1's writeup misfiled under paper_2's
-`RESULTS.md`, unlabeled as unexecuted — fixed by moving it to the correct folder and marking
-it clearly as not-yet-measured.)
+`paper_1_edit_distance_vs_acceptance` is implemented: `replicate_experiment.ipynb` runs end
+to end (`jupyter nbconvert --to notebook --execute`) and `RESULTS.md` reports the real output
+— acceptance rate falls from 97.8% at very-low edit distance to 0.0% at high edit distance.
+This is a genuine measurement of a *simulation*, not of real developer behavior: the data is
+synthetic and the acceptance-probability curve is a hand-picked logistic function, not fit to
+any real dataset — `RESULTS.md` spells out that limitation explicitly. `paper_2_rag_scaling_laws`
+remains an empty scaffold — no spec, notebook, or results yet.
 
 ## **05 — Systems Diagrams** 📋 Planned
 
@@ -118,14 +119,16 @@ planned, not yet created.
 * Real inference measurement: latency, batching, KV-cache, quantization tradeoffs
 * End-to-end LLM fine-tuning workflow (data → train → evaluate) with honest documentation of a real infra failure
 * Agent-loop cost modeling, distinguishing measured latency from simulated cost structure
-* Clear experiment documentation, including what didn't work
+* Research reproduction pipeline: hypothesis → synthetic data → sampled outcomes → binned measurement → visualization
+* Clear experiment documentation, including what didn't work and what's synthetic vs. real
 
 ---
 
 # 📬 **Roadmap**
 
 * Fix the quantization benchmark's model-size estimator (packed quantized weights aren't counted)
-* Build out `04_research_reproductions` and `05_system_diagrams`
+* Fit paper_1's acceptance model to a real or published dataset instead of hand-picked constants
+* Build out `paper_2_rag_scaling_laws` and `05_system_diagrams`
 * Add LoRA fine-tuning and functional-correctness testing to the fine-tuning lab
 
 ---
