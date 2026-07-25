@@ -26,7 +26,7 @@ the parts that didn't go as planned.
 codex-systems-lab/
 │
 ├── 01_inference_profiling/          → Inference speed, batching, KV cache, quantization (measured, real hardware)
-├── 02_light_finetuning/             → End-to-end LLM fine-tuning pipeline on Python code (functional, one open issue)
+├── 02_light_finetuning/             → End-to-end LLM fine-tuning pipeline on Python code (complete, real before/after eval)
 ├── 03_agentic_performance/          → Agent loop benchmarks (part measured, part simulated — see below)
 ├── 04_research_reproductions/       → Scaffolded, one hypothesis writeup, no notebooks run yet
 ├── 05_system_diagrams/              → Planned — not yet built
@@ -121,7 +121,6 @@ planned, not yet created.
 # 📬 **Roadmap**
 
 * Fix the quantization benchmark's model-size estimator (packed quantized weights aren't counted)
-* Resolve the checkpoint-save issue in `02_light_finetuning` and complete the before/after comparison
 * Build out `04_research_reproductions` and `05_system_diagrams`
 * Add LoRA fine-tuning and functional-correctness testing to the fine-tuning lab
 
