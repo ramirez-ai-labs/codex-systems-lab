@@ -1,33 +1,22 @@
 # 📘 **codex-systems-lab**
 
-*A hands-on research and engineering lab exploring the systems, performance, and training foundations behind modern AI models and agentic workflows.*
+*A hands-on lab exploring the systems and performance foundations behind modern AI models and agentic workflows.*
 
-This repository contains a curated set of experiments designed to demonstrate the technical depth expected in modern AI research and engineering work. It covers:
-
-* **Inference performance optimization**
-* **Light LLM fine-tuning for code generation and task-specific adaptation**
-* **Agentic system behavior & latency profiling**
-* **Reproductions of research findings**
-* **Systems diagrams for LLM inference & agentic workflows**
-
-This lab blends **ML research**, **systems engineering**, and **developer-experience insights**—mirroring the full-stack thinking required to build and evaluate practical AI systems.
+This repository contains experiments measuring real inference behavior — latency, batching,
+KV-cache effects, and agent-loop overhead — plus a working end-to-end LLM fine-tuning pipeline.
+It's intentionally CPU-friendly and structured like a research notebook: each experiment has
+its own script and a `RESULTS.md` documenting what was actually run, including where things
+didn't fully work.
 
 ---
 
 # 🔍 **Why This Lab Exists**
 
-Modern AI systems for coding, assistance, and automation combine:
-
-* Large-scale model inference
-* Context routing and retrieval
-* Agentic loop orchestration
-* Tool calling
-* Performance-sensitive deployment environments
-* Model evaluation and experiment design
-
-This repo demonstrates the ability to reason **end-to-end across that entire stack**.
-
-It is intentionally structured like a research notebook + engineering diagnostics toolkit.
+Modern AI systems for coding, assistance, and automation combine model inference, context
+routing, agentic loop orchestration, tool calling, and performance-sensitive deployment. This
+repo demonstrates hands-on measurement and experimentation across that stack — not just
+reading about how it works, but running it and recording what actually happens, including
+the parts that didn't go as planned.
 
 ---
 
@@ -36,19 +25,13 @@ It is intentionally structured like a research notebook + engineering diagnostic
 ```
 codex-systems-lab/
 │
-├── 01_inference_profiling/          → Inference speed, batching, quantization, KV cache effects
-├── 02_light_finetuning/             → Small-scale LLM fine-tuning on Python code
-├── 03_agentic_performance/          → Agent loop benchmarks & tool-use simulations
-├── 04_research_reproductions/       → Small-scale replications of ML research studies
-├── 05_system_diagrams/              → Mermaid diagrams: inference pipelines, batching, agent flows
+├── 01_inference_profiling/          → Inference speed, batching, KV cache, quantization (measured, real hardware)
+├── 02_light_finetuning/             → End-to-end LLM fine-tuning pipeline on Python code (functional, one open issue)
+├── 03_agentic_performance/          → Agent loop benchmarks (part measured, part simulated — see below)
+├── 04_research_reproductions/       → Planned — not yet built
+├── 05_system_diagrams/              → Planned — not yet built
 └── README.md                        → This file
 ```
-
-Each directory includes:
-
-* **Python scripts**
-* **RESULTS.md** with findings
-* **Notebooks or plots (when relevant)**
 
 ---
 
@@ -71,124 +54,71 @@ pip install -r requirements.txt
 
 ## 3. Run your first experiment
 
-For example, measure CPU vs GPU inference:
-
 ```bash
 python 01_inference_profiling/benchmark_cpu_vs_gpu.py
 ```
 
-Results will appear in:
-
-```
-01_inference_profiling/RESULTS.md
-```
+Results appear in `01_inference_profiling/RESULTS_cpu_vs_gpu.md`.
 
 ---
 
-# 📊 **Included Experiment Categories**
+# 📊 **What's Actually Here**
 
-## **01 — Inference Profiling**
+## **01 — Inference Profiling** ✅ Measured, real hardware
 
-Experiments include:
+Real DistilGPT-2 inference runs on a MacBook Air (i5-8210Y, CPU-only, no GPU detected),
+with raw console output and machine specs recorded in each results file:
 
-* CPU vs GPU latency
-* Batch size effects
-* KV cache impact analysis
-* Quantization comparison (fp32 → fp16 → int8 → gguf)
+* `benchmark_cpu_vs_gpu.py` → `RESULTS_cpu_vs_gpu.md` — 2.17s avg for 32 tokens on CPU
+* `benchmark_batching_effects.py` → `RESULTS_batch_size.md` — throughput across batch sizes 1/2/4/8
+* `benchmark_kv_cache_analysis.py` → `RESULTS_kv_cache_analysis.md` — 48.1x speedup from first-token to cached next-token latency
+* `benchmark_quantization_comparison.py` — FP32 vs. INT8 dynamic quantization comparison. Script is functional; results file not yet captured.
 
-These scripts illustrate the tradeoffs between **speed, cost, resource usage, and model throughput**.
+## **02 — Light Fine-Tuning** ✅ Functional pipeline, one open issue
 
----
+Full fine-tuning of DistilGPT-2 on a small Python-function dataset using HuggingFace
+`Trainer` + AdamW — data prep, tokenization, training, and perplexity evaluation all run
+end to end. On this CPU-only setup, saving the fine-tuned checkpoint failed due to a
+PyTorch/Transformers compatibility issue; training completed and was verified independently,
+but the before/after perplexity comparison in `RESULTS.md` is incomplete as a result.
+LoRA and functional-correctness testing are scoped as next steps, not yet implemented.
 
-## **02 — Light Fine-Tuning**
+## **03 — Agentic Performance** ⚠️ Part measured, part simulated
 
-Small-scale code-specific fine-tuning examples:
+* `agent_loop_benchmark.py` and `tool_latency_simulation.py` make real DistilGPT-2 inference
+  calls to measure think→act→reflect overhead and tool-latency dominance — genuine measurement.
+* `error_recovery_costs.py` and `retries_vs_quality_analysis.py` model retry/failure costs
+  using `random.uniform()` and `time.sleep()`, not a real model or real tool — this models the
+  *shape* of the cost tradeoff, it doesn't measure a real system. Both scripts are transparent
+  about this in their own docstrings.
 
-* LoRA fine-tuning on Python functions
-* Perplexity evaluation on code
-* Functional correctness checks
-* Dataset creation workflow
+## **04 — Research Reproductions** 📋 Planned
 
-This section shows practical ML training experience without requiring expensive GPUs.
+One subfolder scaffold exists (`paper_1_edit_distance_vs_acceptance`) with a README describing
+the intended reproduction. The notebook and results have not been built yet.
 
----
+## **05 — Systems Diagrams** 📋 Planned
 
-## **03 — Agentic Performance**
-
-Simulated agent loops to understand:
-
-* Multi-step reasoning cost
-* Tool latency accumulation
-* Retry strategies
-* Error recovery cost
-
-These experiments mirror real-world agentic coding systems (e.g., planning, tool-use, self-repair).
-
----
-
-## **04 — Research Reproductions**
-
-Small replications of published findings, such as:
-
-* Edit-distance vs acceptance rate
-* RAG retrieval degradation effects
-* Prompting strategy comparisons
-* Scaling effects (small-model approximations)
-
-This section demonstrates **research literacy, experiment design, and reproducibility**.
-
----
-
-## **05 — Systems Diagrams**
-
-Includes Mermaid diagrams for:
-
-* LLM inference pipeline
-* Batching architecture
-* Agent control-flow loop
-* Context routing
-
-These diagrams summarize the conceptual model behind the experiments.
-
----
-
-# 🧪 **Example Output**
-
-```text
-CPU: 0.4231 sec
-CUDA: 0.0784 sec
-
-Batch size 1 → 0.42 sec
-Batch size 4 → 0.29 sec
-Batch size 8 → 0.23 sec
-```
-
-Output tables & notes live in each folder’s `RESULTS.md`.
+Scaffolded but empty. Diagrams for inference pipelines, batching, and agent control flow are
+planned, not yet created.
 
 ---
 
 # 🧠 **Skills Demonstrated**
 
-This repository highlights capabilities valuable across **applied AI engineering and research roles**:
-
-* LLM inference mechanics
-* Model optimization and throughput diagnostics
-* Experimental design & empirical analysis
-* Light fine-tuning and evaluation
-* Agent loop modeling & performance tuning
-* Systems thinking across ML + infrastructure
-* Clear communication of findings
+* Real inference measurement: latency, batching, KV-cache, quantization tradeoffs
+* End-to-end LLM fine-tuning workflow (data → train → evaluate) with honest documentation of a real infra failure
+* Agent-loop cost modeling, distinguishing measured latency from simulated cost structure
+* Clear experiment documentation, including what didn't work
 
 ---
 
-# 📬 **Questions or Improvements?**
+# 📬 **Roadmap**
 
-This is an evolving lab. Future additions will include:
-
-* Advanced quantization
-* Function-calling benchmarks
-* Multimodal agent loops
-* Model-based debugging analysis
+* Capture quantization comparison results
+* Resolve the checkpoint-save issue in `02_light_finetuning` and complete the before/after comparison
+* Build out `04_research_reproductions` and `05_system_diagrams`
+* Add LoRA fine-tuning and functional-correctness testing to the fine-tuning lab
 
 ---
 
