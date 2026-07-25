@@ -77,20 +77,26 @@ with raw console output and machine specs recorded in each results file:
 ## **02 — Light Fine-Tuning** ✅ Complete, end to end
 
 Full fine-tuning of DistilGPT-2 on 31 Python-function training examples using HuggingFace
-`Trainer` + AdamW — data prep, tokenization, training, checkpoint save, and perplexity
-evaluation all run end to end on CPU. Validation perplexity drops from 2989.72 (base model)
-to 38.23 (fine-tuned), a full before/after comparison in `RESULTS.md`. The earlier
-checkpoint-save failure was a `requirements.txt` bug (`torch<2.2` has no wheels for
-Python 3.12), not a fundamental compatibility issue — fixed by relaxing the pin.
-LoRA and functional-correctness testing are scoped as next steps, not yet implemented.
+`Trainer` + AdamW — data prep, tokenization, training, final model save, and perplexity
+evaluation all run end to end on CPU. (Note: `Trainer`'s own intermediate checkpointing is
+intentionally disabled via `save_strategy="no"` for simplicity — the "final model save" here
+is the separate `model.save_pretrained()` call at the end of `train.py`, not that.) Validation
+perplexity drops from 2989.72 (base model) to 38.23 (fine-tuned), a full before/after
+comparison in `RESULTS.md`. The earlier failure in that final save was a `requirements.txt`
+bug (`torch<2.2` has no wheels for Python 3.12), not a fundamental compatibility issue —
+fixed by relaxing the pin. LoRA and functional-correctness testing are scoped as next steps,
+not yet implemented.
 
 ## **03 — Agentic Performance** ⚠️ Part measured, part simulated
 
 * `agent_loop_benchmark.py` makes real DistilGPT-2 inference calls to measure think→act→reflect
-  overhead — genuine measurement. `tool_latency_simulation.py` also makes real inference calls
+  overhead — genuine measurement, a 3-step loop measured ~4.0x slower than a single inference
+  call in `RESULTS.md`'s captured run (exact multiplier varies by run; this is unseeded
+  wall-clock timing). `tool_latency_simulation.py` also makes real inference calls
   for the "think" step, but stands in a fixed `time.sleep()` for the "tool" step instead of
   calling a real tool — its own docstring says so explicitly ("This script does NOT call real
-  APIs"). So the LLM-side cost is measured; the tool-side cost is a constant, not measured.
+  APIs"). So the LLM-side cost is measured (tool calls were 54% of total latency in that run);
+  the tool-side cost is a constant, not measured.
 * `error_recovery_costs.py` and `retries_vs_quality_analysis.py` model retry/failure costs
   using `random.uniform()` and `time.sleep()` for both the LLM and tool steps — no model or
   tool is called at all, real or otherwise. This models the *shape* of the cost tradeoff, it

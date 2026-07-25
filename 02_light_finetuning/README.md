@@ -13,7 +13,7 @@ This folder walks through fine-tuning `distilgpt2` on a handful of Python snippe
 
 | Parameter | Why it matters |
 |-----------|----------------|
-| **Max sequence length (128 tokens)** | Truncates/ pads each example to fit within memory limits. |
+| **Max sequence length (128 tokens)** | Truncates/pads each example to fit within memory limits. |
 | **Batch size (2)** | Number of samples processed simultaneously; small batches prevent CPU RAM spikes. |
 | **Epochs (2)** | Full passes over the dataset; a couple of passes are enough for this toy corpus. |
 | **Learning rate (5e-5)** | Controls how big each weight update is; GPT-2 models stay stable at this scale. |
