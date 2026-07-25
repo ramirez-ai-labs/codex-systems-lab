@@ -72,7 +72,7 @@ with raw console output and machine specs recorded in each results file:
 * `benchmark_cpu_vs_gpu.py` → `RESULTS_cpu_vs_gpu.md` — 2.17s avg for 32 tokens on CPU
 * `benchmark_batching_effects.py` → `RESULTS_batch_size.md` — throughput across batch sizes 1/2/4/8
 * `benchmark_kv_cache_analysis.py` → `RESULTS_kv_cache_analysis.md` — 48.1x speedup from first-token to cached next-token latency
-* `benchmark_quantization_comparison.py` — FP32 vs. INT8 dynamic quantization comparison. Script is functional; results file not yet captured.
+* `benchmark_quantization_comparison.py` → `RESULTS_quantization.md` — FP32 vs. INT8 dynamic quantization; INT8 was ~1.5x faster, but the script's reported model-size numbers are inaccurate (documented as a known limitation in the results file, not silently trusted)
 
 ## **02 — Light Fine-Tuning** ✅ Functional pipeline, one open issue
 
@@ -115,7 +115,7 @@ planned, not yet created.
 
 # 📬 **Roadmap**
 
-* Capture quantization comparison results
+* Fix the quantization benchmark's model-size estimator (packed quantized weights aren't counted)
 * Resolve the checkpoint-save issue in `02_light_finetuning` and complete the before/after comparison
 * Build out `04_research_reproductions` and `05_system_diagrams`
 * Add LoRA fine-tuning and functional-correctness testing to the fine-tuning lab
