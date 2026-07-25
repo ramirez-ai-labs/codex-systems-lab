@@ -8,7 +8,7 @@ can speed up inference by better utilizing the model’s parallel compute.
 ## 🚀 How to Run
 
 ```bash
-python 01_inference_profiling/benchmark_batch_size.py
+python 01_inference_profiling/benchmark_batching_effects.py
 ```
 
 ---

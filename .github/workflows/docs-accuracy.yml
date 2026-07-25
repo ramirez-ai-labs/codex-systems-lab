@@ -1,0 +1,19 @@
+name: Docs accuracy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check README run-commands and links resolve
+        run: python scripts/check_docs_accuracy.py
+      - name: Check all scripts compile
+        run: python -m py_compile $(find . -name '*.py' -not -path './.venv/*')

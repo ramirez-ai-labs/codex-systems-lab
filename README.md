@@ -157,5 +157,6 @@ AI Architect & Developer Experience Engineer
 Portfolio: [https://ramirezailabs.com/](https://ramirezailabs.com/)
 GitHub: [https://github.com/ramirez-ai-labs](https://github.com/ramirez-ai-labs)
 LinkedIn: [https://linkedin.com/in/victor-hugo-ramirez-mids](https://linkedin.com/in/victor-hugo-ramirez-mids)
+License: [MIT](LICENSE)
 
 ---
