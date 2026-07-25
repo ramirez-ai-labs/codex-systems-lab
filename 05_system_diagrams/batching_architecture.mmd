@@ -1,6 +1,10 @@
-%% Batching Architecture — how batch size affects per-batch latency
+%% Batching Architecture — how batch size affects throughput
 %% Real numbers from 01_inference_profiling/RESULTS_batch_size.md
-%% (MacBook Air, i5-8210Y, CPU-only, distilgpt2, avg of 5 runs per size)
+%% (MacBook Air, i5-8210Y, CPU-only, distilgpt2, 24 new tokens/prompt,
+%% avg of 2 runs per batch size, 4 rotating prompts)
+%% NOTE: this replaces an earlier version of this diagram that cited
+%% latency-only numbers (1.52/1.32/1.47/2.49s) from an older version of
+%% benchmark_batching_effects.py that no longer exists in this repo.
 %% This is a diagram of the benchmark script's own request grouping,
 %% not a production request-batching service — see container_orchestration.md
 %% for how a real batching queue would sit in front of this.
@@ -26,17 +30,17 @@ flowchart LR
     P7 --> BQ
     P8 --> BQ
 
-    BQ -->|batch_size=1| B1["Forward pass\n1.5233s avg"]
-    BQ -->|batch_size=2| B2["Forward pass\n1.3181s avg (fastest measured)"]
-    BQ -->|batch_size=4| B4["Forward pass\n1.4766s avg"]
-    BQ -->|batch_size=8| B8["Forward pass\n2.4881s avg (CPU-bound, slows down)"]
+    BQ -->|batch_size=1| B1["Forward pass: 0.74s\n24 tokens -- 32.4 tok/s"]
+    BQ -->|batch_size=2| B2["Forward pass: 1.23s\n48 tokens -- 39.2 tok/s"]
+    BQ -->|batch_size=4| B4["Forward pass: 1.34s\n96 tokens -- 71.8 tok/s"]
+    BQ -->|batch_size=8| B8["Forward pass: 1.69s\n192 tokens -- 113.4 tok/s (best throughput)"]
 
     B1 --> OUT[Generated tokens]
     B2 --> OUT
     B4 --> OUT
     B8 --> OUT
 
-    classDef fastest fill:#d4f4dd,stroke:#2f9e44;
-    classDef slowest fill:#ffe3e3,stroke:#e03131;
-    class B2 fastest;
-    class B8 slowest;
+    classDef best fill:#d4f4dd,stroke:#2f9e44;
+    classDef baseline fill:#fff3bf,stroke:#f08c00;
+    class B8 best;
+    class B1 baseline;

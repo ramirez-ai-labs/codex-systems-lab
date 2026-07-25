@@ -31,16 +31,22 @@ flowchart TB
 Each box maps back to something actually measured or benchmarked elsewhere
 in this repo, not an arbitrary architecture:
 
-- **Model-serving pods** — the per-request cost measured in
-  [`01_inference_profiling`](../01_inference_profiling/): 4.42s first-token
-  latency, 0.09s cached next-token latency, a 48.1x gap between them (see
-  [`inference_pipeline.md`](inference_pipeline.md)).
+- **Model-serving pods** — the per-request cost this repo attempted to
+  measure in [`01_inference_profiling`](../01_inference_profiling/). The
+  first-token-vs-cached-token gap is a real, well-documented mechanism in
+  production LLM serving, but this repo's own benchmark of it doesn't
+  currently reproduce a meaningful gap — see
+  [`inference_pipeline.md`](inference_pipeline.md) and
+  [`RESULTS_kv_cache_analysis.md`](../01_inference_profiling/RESULTS_kv_cache_analysis.md#-limitations)
+  for why. Treat "model-serving pods benefit from a warm KV cache" as
+  general LLM-serving knowledge here, not something this repo measured.
 - **Batching queue** — grouping concurrent requests the way
   `benchmark_batching_effects.py` does, where this repo's CPU-only hardware
-  showed batch size 2 as the sweet spot (1.32s avg) and batch size 8 as
-  CPU-bound and slower (2.49s avg) — see
+  showed tokens/sec throughput climbing from ~32 (batch 1) to ~113
+  (batch 8), even though per-batch latency also rises — see
   [`batching_architecture.mmd`](batching_architecture.mmd). A GPU-backed
-  deployment would shift that sweet spot; this repo never measured one.
+  deployment would likely show a larger and cleaner effect; this repo never
+  measured one, and even the CPU numbers vary noticeably run to run.
 - **Agent Orchestrator / Tool sidecars** — the think→act→reflect loop and
   tool-call latency modeled in
   [`03_agentic_performance`](../03_agentic_performance/README.md), where
@@ -48,6 +54,12 @@ in this repo, not an arbitrary architecture:
 
 ## Limitations
 
+- **The KV-cache benefit on the "Model-serving pods" box is asserted, not
+  measured by this repo.** `benchmark_kv_cache_analysis.py`'s methodology
+  doesn't actually persist a cache across its measured calls, so its
+  headline speedup number doesn't reproduce — see the results file's
+  Limitations section. The mechanism is real in production LLM serving;
+  this repo just doesn't have a working benchmark of it yet.
 - **Nothing here is deployed or even containerized.** No Dockerfile,
   Kubernetes manifest, Helm chart, or Terraform config exists in this repo —
   the boxes above are a proposal, grounded in this repo's own benchmark

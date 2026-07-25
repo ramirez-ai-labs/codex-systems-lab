@@ -64,14 +64,25 @@ Results appear in `01_inference_profiling/RESULTS_cpu_vs_gpu.md`.
 
 # 📊 **What's Actually Here**
 
-## **01 — Inference Profiling** ✅ Measured, real hardware
+## **01 — Inference Profiling** ⚠️ Measured, real hardware — two findings didn't hold up on re-measurement
 
 Real DistilGPT-2 inference runs on a MacBook Air (i5-8210Y, CPU-only, no GPU detected),
-with raw console output and machine specs recorded in each results file:
+with raw console output and machine specs recorded in each results file. Re-running all
+four benchmarks multiple times surfaced real problems in two of them — documented rather
+than quietly patched over:
 
-* `benchmark_cpu_vs_gpu.py` → `RESULTS_cpu_vs_gpu.md` — 2.17s avg for 32 tokens on CPU
-* `benchmark_batching_effects.py` → `RESULTS_batch_size.md` — throughput across batch sizes 1/2/4/8
-* `benchmark_kv_cache_analysis.py` → `RESULTS_kv_cache_analysis.md` — 48.1x speedup from first-token to cached next-token latency
+* `benchmark_cpu_vs_gpu.py` → `RESULTS_cpu_vs_gpu.md` — ~1–7s avg for 32 tokens on CPU; six
+  fresh runs showed a 7x spread on this hardware, so the original single-number 2.17s
+  figure understated how much this benchmark varies run to run
+* `benchmark_batching_effects.py` → `RESULTS_batch_size.md` — tokens/sec throughput climbs
+  from ~32 (batch 1) to ~113 (batch 8); the script itself was rewritten at some point
+  (rotating prompts, tokens/sec metric) and the results file described an older version
+  that no longer exists — rewritten to match current behavior
+* `benchmark_kv_cache_analysis.py` → `RESULTS_kv_cache_analysis.md` — ⚠️ the documented
+  "48.1x speedup" does not reproduce (four fresh runs measured ~0.6–1.2x, no consistent
+  cache benefit). Root cause: the script measures each "next token" as an independent
+  `generate(max_new_tokens=1)` call, which never persists a KV cache across calls — a real
+  methodology gap, not just noise. See the results file for what a correct version would need.
 * `benchmark_quantization_comparison.py` → `RESULTS_quantization.md` — FP32 vs. INT8 dynamic quantization; INT8 was ~1.5x faster, but the script's reported model-size numbers are inaccurate (documented as a known limitation in the results file, not silently trusted)
 
 ## **02 — Light Fine-Tuning** ✅ Complete, end to end
@@ -150,6 +161,8 @@ Three Mermaid diagrams, each grounded in numbers already measured elsewhere in t
 # 📬 **Roadmap**
 
 * Fix the quantization benchmark's model-size estimator (packed quantized weights aren't counted)
+* Rewrite `benchmark_kv_cache_analysis.py` to measure token-by-token latency within a single continuous `generate()` call (or with `past_key_values` passed explicitly), so it actually exercises KV-cache reuse instead of independent single-token calls
+* Investigate the cause of `benchmark_cpu_vs_gpu.py`'s 7x run-to-run variance (thermal throttling vs. OS scheduling vs. something else) and consider more runs per measurement
 * Fit paper_1's acceptance model, and paper_2's dilution model, to real or published data instead of hand-picked constants
 * Turn `05_system_diagrams/container_orchestration.md` from a proposal into a real Dockerfile + Kubernetes manifest, and measure actual deployment behavior
 * Add LoRA fine-tuning and functional-correctness testing to the fine-tuning lab
