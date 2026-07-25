@@ -1,0 +1,42 @@
+%% Batching Architecture — how batch size affects per-batch latency
+%% Real numbers from 01_inference_profiling/RESULTS_batch_size.md
+%% (MacBook Air, i5-8210Y, CPU-only, distilgpt2, avg of 5 runs per size)
+%% This is a diagram of the benchmark script's own request grouping,
+%% not a production request-batching service — see container_orchestration.md
+%% for how a real batching queue would sit in front of this.
+
+flowchart LR
+    subgraph Incoming["Incoming prompts"]
+        P1[Prompt 1]
+        P2[Prompt 2]
+        P3[Prompt 3]
+        P4[Prompt 4]
+        P5[Prompt 5]
+        P6[Prompt 6]
+        P7[Prompt 7]
+        P8[Prompt 8]
+    end
+
+    P1 --> BQ{{Group into batch}}
+    P2 --> BQ
+    P3 --> BQ
+    P4 --> BQ
+    P5 --> BQ
+    P6 --> BQ
+    P7 --> BQ
+    P8 --> BQ
+
+    BQ -->|batch_size=1| B1["Forward pass\n1.5233s avg"]
+    BQ -->|batch_size=2| B2["Forward pass\n1.3181s avg (fastest measured)"]
+    BQ -->|batch_size=4| B4["Forward pass\n1.4766s avg"]
+    BQ -->|batch_size=8| B8["Forward pass\n2.4881s avg (CPU-bound, slows down)"]
+
+    B1 --> OUT[Generated tokens]
+    B2 --> OUT
+    B4 --> OUT
+    B8 --> OUT
+
+    classDef fastest fill:#d4f4dd,stroke:#2f9e44;
+    classDef slowest fill:#ffe3e3,stroke:#e03131;
+    class B2 fastest;
+    class B8 slowest;

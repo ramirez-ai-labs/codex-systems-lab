@@ -29,7 +29,7 @@ codex-systems-lab/
 ├── 02_light_finetuning/             → End-to-end LLM fine-tuning pipeline on Python code (complete, real before/after eval)
 ├── 03_agentic_performance/          → Agent loop benchmarks (part measured, part simulated — see below)
 ├── 04_research_reproductions/       → paper_1 and paper_2 implemented (synthetic, real output)
-├── 05_system_diagrams/              → Planned — not yet built
+├── 05_system_diagrams/              → Diagrams grounded in real measurements, plus one labeled proposal
 └── README.md                        → This file
 ```
 
@@ -113,10 +113,20 @@ to simulate downstream answer accuracy, which peaks around k=10–50 and then fa
 `RESULTS.md` is explicit that only the recall measurement is real — the dilution/accuracy
 curve is invented, not fit to any real RAG system.
 
-## **05 — Systems Diagrams** 📋 Planned
+## **05 — System Diagrams** ✅ Implemented (one is a labeled proposal)
 
-Scaffolded but empty. Diagrams for inference pipelines, batching, and agent control flow are
-planned, not yet created.
+Three Mermaid diagrams, each grounded in numbers already measured elsewhere in this repo:
+
+* `inference_pipeline.md` — sequence diagram of a single request (tokenize → first forward
+  pass → KV-cache-backed decode loop), annotated with the real 4.42s first-token vs. 0.09s
+  cached next-token latency from `01_inference_profiling`.
+* `batching_architecture.mmd` — flowchart of request batching, annotated with the real
+  per-batch-size latencies from `RESULTS_batch_size.md` (batch size 2 fastest at 1.32s avg,
+  batch size 8 slowest at 2.49s avg on this CPU-only machine).
+* `container_orchestration.md` — a **proposed** containerized deployment connecting the
+  model-serving, batching, and agent-orchestration pieces measured elsewhere in this lab.
+  Explicitly marked as a design sketch: no Dockerfile, Compose file, or Kubernetes manifest
+  exists anywhere in this repo.
 
 ---
 
@@ -126,6 +136,7 @@ planned, not yet created.
 * End-to-end LLM fine-tuning workflow (data → train → evaluate) with honest documentation of a real infra failure
 * Agent-loop cost modeling, distinguishing measured latency from simulated cost structure
 * Research reproduction pipeline: hypothesis → synthetic data → sampled outcomes → binned measurement → visualization
+* System diagramming that stays grounded in real measurements, with proposed-but-unbuilt designs clearly labeled as such
 * Clear experiment documentation, including what didn't work and what's synthetic vs. real
 
 ---
@@ -134,7 +145,7 @@ planned, not yet created.
 
 * Fix the quantization benchmark's model-size estimator (packed quantized weights aren't counted)
 * Fit paper_1's acceptance model, and paper_2's dilution model, to real or published data instead of hand-picked constants
-* Build out `05_system_diagrams`
+* Turn `05_system_diagrams/container_orchestration.md` from a proposal into a real Dockerfile + Kubernetes manifest, and measure actual deployment behavior
 * Add LoRA fine-tuning and functional-correctness testing to the fine-tuning lab
 
 ---
