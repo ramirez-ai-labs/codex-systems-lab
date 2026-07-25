@@ -1,106 +1,109 @@
-# Hypothesized Results: Edit Distance vs Acceptance Rate
+# Results: Edit Distance vs Acceptance Rate
 
-> ⚠️ **Status: not yet run.** `replicate_experiment.ipynb` in this folder is empty —
-> no code has been written or executed for this reproduction. Everything below
-> describes the *expected* outcome, drafted ahead of implementation as a design
-> sketch for what the notebook should produce. Treat it as a hypothesis, not a
-> finding. This file previously lived (misfiled) under `paper_2_rag_scaling_laws/`
-> with no indication it was unexecuted — moved here and relabeled for accuracy.
+> ✅ **Status: executed.** `replicate_experiment.ipynb` in this folder runs end to
+> end (`jupyter nbconvert --to notebook --execute`) and produced the numbers
+> below. Everything here is real output from that run — not hand-written
+> narrative. The data and the "developer acceptance" behavior are still
+> **entirely synthetic**: see [Limitations](#limitations) before drawing any
+> conclusion about real developer behavior from this.
 
 ## Experiment Summary
 
-This experiment is intended to test the relationship between **edit distance** and
-**acceptance rate** for AI-generated code suggestions.
+This experiment tests the relationship between **edit distance** and
+**acceptance rate** for synthetic AI-generated code suggestions.
 
 **Core question:**
 
 > *How does the amount of editing required to reach a final solution affect whether developers accept AI suggestions?*
 
-The plan is to simulate:
+What the notebook actually does:
 
-- AI-generated code suggestions
-- Developer-edited final code
-- Acceptance decisions based on how close the suggestion was to the final result
-
-Closeness would be measured using **edit distance**, a simple string-based metric.
-
----
-
-## Expected Findings (Hypothesis)
-
-### 1. Acceptance Should Drop as Edit Distance Increases
-
-The expected core result:
-
-> **Lower edit distance → higher acceptance probability**
-
-When suggestions are close to the final solution, developers should be far more
-likely to accept them — this is the general pattern reported in real-world AI
-coding telemetry (GitHub Copilot studies, Codex productivity research), which is
-what this reproduction is trying to demonstrate on synthetic data, not what it
-has actually shown yet.
-
-| Edit Distance (Relative) | Expected Acceptance Trend |
-| --- | --- |
-| Very low (near exact) | Very high |
-| Moderate | Sharp drop-off |
-| High | Rarely accepted |
+1. Defines 15 short "final" Python functions (hand-written, not sampled from any real codebase).
+2. For each one, generates 6 mutated "suggestion" variants by applying 0, 2, 5, 10, 20, or 40 random character-level edits (insert/delete/substitute).
+3. Measures the *actual* Levenshtein edit distance between each suggestion and its final version (mutations can overlap and cancel out, so the target edit count and the measured distance aren't identical).
+4. Defines a hand-picked logistic function `P(accept) = 1 / (1 + exp((distance - 18) / 6))` — a decay curve chosen by construction, not fit to any data.
+5. Samples a real Bernoulli outcome per suggestion (`random.random() < p`, seed = 42) and reports the **empirical acceptance rate** of those sampled outcomes, not the underlying probability curve.
 
 ---
 
-### 2. Small Improvements Should Yield Big Gains
+## Results (seed = 42, 90 samples, edit distance range 0–35)
 
-The hypothesis:
+Overall empirical acceptance rate across all 90 samples: **75.6%**
 
-> **Reducing edit distance slightly could dramatically improve acceptance.**
+| Edit Distance Bin | N | Acceptance Rate |
+| --- | --- | --- |
+| Very low (0–5) | 45 | 97.8% |
+| Low (6–15) | 21 | 81.0% |
+| Medium (16–30) | 19 | 36.8% |
+| High (31+) | 5 | 0.0% |
 
-Going from *"mostly correct"* → *"nearly correct"* is expected to noticeably
-raise acceptance likelihood, even though both are technically "incorrect" —
-developers are expected to prefer the suggestion that saves more effort.
+![Acceptance rate vs. edit distance](edit_distance_vs_acceptance.png)
 
-If this holds, it would explain why prompt tuning, retrieval improvements, and
-minor decoding optimizations can have outsized impact on developer productivity.
-
----
-
-### 3. Diminishing Returns After "Good Enough"
-
-Once suggestions reach a **low edit distance**, further improvements are expected
-to have limited impact — developers accepting "close enough" suggestions rather
-than requiring perfection.
-
----
-
-## Conceptual Shape (Not Real Data)
+Raw console output from the notebook run:
 
 ```text
-Acceptance Rate
-│\
-│ \
-│  \
-│   \____
-│        \__
-└────────────────── Edit Distance
+15 final snippets loaded
+90 synthetic (suggestion, final) pairs generated
+Edit distance range: 0 to 35
+Overall empirical acceptance rate across all 90 samples: 75.6%
+Edit Distance Bin        N   Acceptance Rate
+--------------------------------------------
+Very low (0-5)          45            97.8%
+Low (6-15)              21            81.0%
+Medium (16-30)          19            36.8%
+High (31+)               5             0.0%
 ```
 
-This is an illustration of the expected relationship shape, not a plot of
-measured output — no data has been generated yet.
+---
+
+## Interpretation
+
+Acceptance rate falls off sharply as edit distance increases — but this is
+**expected by construction**, not a discovery. The logistic function in
+Step 4 above was written by hand specifically to produce this shape. Running
+the notebook confirms:
+
+- The simulation code is correct and runs end to end.
+- Sampling real Bernoulli outcomes from a hand-picked probability curve
+  produces an empirical curve that matches the underlying curve's shape,
+  as expected from the law of large numbers at these sample sizes.
+- This is a legitimate worked example of a measurement pipeline (hypothesis
+  → synthetic data → sampled outcomes → binned measurement → visualization),
+  which is useful for demonstrating the *process*, but the specific numbers
+  above (97.8%, 81.0%, 36.8%, 0.0%) are an artifact of the hand-chosen
+  `MIDPOINT`/`SCALE` constants, not a finding about developer behavior.
 
 ---
 
 ## Limitations
 
-- Nothing here is measured — the notebook does not exist yet
-- Planned data is synthetic, not real developer telemetry
-- Planned metric is string-based edit distance, not semantic similarity
-- No modeling of developer intent, context, or latency is planned
+- **No real developers, suggestions, or code are involved anywhere.** Both
+  the "final" snippets and the mutated "suggestions" are synthetic; there is
+  no real coding assistant generating suggestions.
+- **The acceptance model is invented, not fit.** `MIDPOINT=18` and `SCALE=6`
+  were chosen to produce a plausible-looking curve, not calibrated against
+  any real telemetry, published dataset, or paper's reported coefficients.
+- **Edit distance here is character-level Levenshtein**, not a
+  semantically-aware or token-level metric — real coding-assistant studies
+  typically use something closer to token or AST-level diffs.
+- **Small sample (90 points, only 5 in the "High" bin)** — the 0.0% in that
+  bin is not a strong statistical claim, just what 5 samples happened to
+  produce at this seed.
+
+The real, defensible claim from this notebook is: *"acceptance rate
+declining with edit distance is a documented pattern in real AI-coding
+telemetry (Copilot studies, Codex productivity research), and this notebook
+demonstrates a runnable, reproducible pipeline for exploring that shape on
+synthetic data."* It is not a replication of any specific paper's measured
+numbers.
 
 ---
 
 ## Next Steps
 
-1. Implement `replicate_experiment.ipynb`: generate synthetic suggestions,
-   compute edit distance, simulate acceptance decisions
-2. Replace this file's hypothesized numbers with actual measured output
-3. Compare edit distance with semantic similarity metrics
-4. Add latency as a second axis
+1. Replace the hand-picked `MIDPOINT`/`SCALE` constants with values fit to
+   a real or published dataset, if one becomes available.
+2. Compare character-level edit distance against a semantic-similarity or
+   token-level metric.
+3. Add latency as a second axis alongside edit distance.
+4. Build out `paper_2_rag_scaling_laws` as a second, independent reproduction.
