@@ -28,7 +28,7 @@ codex-systems-lab/
 ├── 01_inference_profiling/          → Inference speed, batching, KV cache, quantization (measured, real hardware)
 ├── 02_light_finetuning/             → End-to-end LLM fine-tuning pipeline on Python code (functional, one open issue)
 ├── 03_agentic_performance/          → Agent loop benchmarks (part measured, part simulated — see below)
-├── 04_research_reproductions/       → Planned — not yet built
+├── 04_research_reproductions/       → Scaffolded, one hypothesis writeup, no notebooks run yet
 ├── 05_system_diagrams/              → Planned — not yet built
 └── README.md                        → This file
 ```
@@ -95,8 +95,12 @@ LoRA and functional-correctness testing are scoped as next steps, not yet implem
 
 ## **04 — Research Reproductions** 📋 Planned
 
-One subfolder scaffold exists (`paper_1_edit_distance_vs_acceptance`) with a README describing
-the intended reproduction. The notebook and results have not been built yet.
+Two subfolder scaffolds exist. `paper_1_edit_distance_vs_acceptance` has a README and a
+`RESULTS.md`, but the latter is explicitly labeled as a hypothesis, not a finding — the
+notebook that would produce real numbers hasn't been implemented. `paper_2_rag_scaling_laws`
+is empty. (An earlier version of this repo had paper_1's writeup misfiled under paper_2's
+`RESULTS.md`, unlabeled as unexecuted — fixed by moving it to the correct folder and marking
+it clearly as not-yet-measured.)
 
 ## **05 — Systems Diagrams** 📋 Planned
 
