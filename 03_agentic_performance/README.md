@@ -33,7 +33,9 @@ This lab shows why agent systems:
 
 ## Experiments in This Folder
 
-### 1️⃣ `agent_loop_benchmark.py` — What is an Agent Loop?
+### 1️⃣ `agent_loop_benchmark.py` — What is an Agent Loop? ✅ Measured
+
+Makes real DistilGPT-2 inference calls.
 
 Demonstrates the **baseline cost** of multi-step reasoning.
 
@@ -46,7 +48,9 @@ This is the foundation for everything else.
 
 ---
 
-### 2️⃣ `tool_latency_simulation.py` — Why Tools Dominate Latency
+### 2️⃣ `tool_latency_simulation.py` — Why Tools Dominate Latency ✅ Measured
+
+Makes real DistilGPT-2 inference calls alongside simulated tool latency.
 
 Simulates an agent that calls external tools.
 
@@ -59,7 +63,10 @@ This explains why async execution and batching matter.
 
 ---
 
-### 3️⃣ `error_recovery_costs.py` — The Hidden Cost of Failures
+### 3️⃣ `error_recovery_costs.py` — The Hidden Cost of Failures ⚠️ Simulated
+
+Uses `random.uniform()` and `time.sleep()`, not a real model or tool — models the
+*shape* of the cost tradeoff rather than measuring a real system.
 
 Simulates tool failures and retries.
 
@@ -72,7 +79,10 @@ This mirrors real-world agent behavior under failure.
 
 ---
 
-### 4️⃣ `retries_vs_quality_analysis.py` — Diminishing Returns
+### 4️⃣ `retries_vs_quality_analysis.py` — Diminishing Returns ⚠️ Simulated
+
+Uses `random.uniform()` and `time.sleep()`, not a real model or tool — models the
+*shape* of the cost tradeoff rather than measuring a real system.
 
 Explores the tradeoff between retries and success.
 
