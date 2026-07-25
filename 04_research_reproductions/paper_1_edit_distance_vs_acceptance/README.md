@@ -148,5 +148,5 @@ Now that the notebook runs end to end, consider:
 - Adding latency or retry cost into acceptance modeling
 - Connecting this to RAG quality or prompt strategies
 
-A second reproduction, `paper_2_rag_scaling_laws/`, is scaffolded alongside
-this one and is also not yet implemented.
+A second reproduction, [`paper_2_rag_scaling_laws/`](../paper_2_rag_scaling_laws/README.md),
+is also implemented and runs end to end alongside this one.
