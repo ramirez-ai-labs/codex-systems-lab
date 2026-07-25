@@ -219,13 +219,13 @@ def train():
     # Save model
     # ----------------------------
     print("\nSaving fine-tuned model...")
-    
-    # NOTE:
-    # Some CPU-only PyTorch + Transformers installs fail when saving models
-    # due to DTensor / distributed imports.
-    # This does NOT affect training correctness.
-    
 
+    # NOTE:
+    # Requires torch/transformers versions matching requirements.txt.
+    # A prior version of this repo pinned torch<2.2, which has no wheels
+    # for Python 3.12 — installing an unpinned/newer transformers against
+    # an unrelated torch build made save_pretrained() fail. If this still
+    # fails for you, check `pip show torch transformers` against requirements.txt.
     try:
         model.save_pretrained(OUTPUT_DIR, safe_serialization=False)
         tokenizer.save_pretrained(OUTPUT_DIR)
@@ -234,8 +234,8 @@ def train():
         print("\n⚠️ Model saving skipped.")
         print("Reason:", e)
         print(
-            "\nThis is a known PyTorch/Transformers compatibility issue on some CPU-only setups.\n"
-            "Training completed successfully, which is the main goal of this lab."
+            "\nCheck that your installed torch/transformers versions match requirements.txt.\n"
+            "Training completed successfully regardless, which is the main goal of this lab."
         )
 
     print("\nTraining complete!")

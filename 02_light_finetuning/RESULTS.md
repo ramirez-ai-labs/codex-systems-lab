@@ -42,8 +42,8 @@ Each line is a JSON object with a `text` field, e.g.
 {"text": "def is_even(number):\n    return number % 2 == 0"}
 ```
 
-- **Training examples:** 8  
-- **Validation examples:** 2  
+- **Training examples:** 31  
+- **Validation examples:** 8  
 
 The minimal size allows beginners to:
 
@@ -115,14 +115,18 @@ Plain-English explanation:
 
 | Model               | Validation Perplexity |
 |---------------------|-----------------------|
-| Base `distilgpt2`   | ~4689                 |
-| Fine-tuned model    | Not available         |
+| Base `distilgpt2`   | 2989.72               |
+| Fine-tuned model    | 38.23                 |
 
-Why is the fine-tuned score missing?
+The fine-tuned model is ~78x less perplexed by the validation set than the base model —
+expected given the dataset is small and repetitive, so the model largely learns to predict
+this specific style of short Python function. This is a sanity check that the training loop
+works, not evidence of general code-generation quality.
 
-- On some CPU-only setups, saving the fine-tuned weights fails because of a PyTorch/Transformers compatibility issue.
-- Training still completed, and the evaluation script was verified independently.
-- Highlighting this limitation mirrors real-world engineering hurdles.
+Earlier versions of this repo pinned `torch<2.2` in `requirements.txt`, which has no wheels
+for Python 3.12. Installing a newer transformers against an unrelated torch build caused
+`save_pretrained()` to fail, so this comparison was previously incomplete. Fixed in
+`requirements.txt` (`torch>=2.0,<2.4`) — see [../requirements.txt](../requirements.txt).
 
 ---
 
@@ -150,7 +154,7 @@ This mirrors how research notebooks evolve into engineering artifacts.
 
 ## 10. Suggested Next Steps
 
-1. Expand the dataset to 50–500 Python functions.
+1. Expand the dataset further, from 31 training examples toward 50–500 Python functions.
 2. Compare generated code snippets before vs. after fine-tuning.
 3. Add basic unit tests for generated functions.
 4. Experiment with parameter-efficient methods (LoRA, adapters).

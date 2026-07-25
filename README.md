@@ -74,13 +74,14 @@ with raw console output and machine specs recorded in each results file:
 * `benchmark_kv_cache_analysis.py` → `RESULTS_kv_cache_analysis.md` — 48.1x speedup from first-token to cached next-token latency
 * `benchmark_quantization_comparison.py` → `RESULTS_quantization.md` — FP32 vs. INT8 dynamic quantization; INT8 was ~1.5x faster, but the script's reported model-size numbers are inaccurate (documented as a known limitation in the results file, not silently trusted)
 
-## **02 — Light Fine-Tuning** ✅ Functional pipeline, one open issue
+## **02 — Light Fine-Tuning** ✅ Complete, end to end
 
-Full fine-tuning of DistilGPT-2 on a small Python-function dataset using HuggingFace
-`Trainer` + AdamW — data prep, tokenization, training, and perplexity evaluation all run
-end to end. On this CPU-only setup, saving the fine-tuned checkpoint failed due to a
-PyTorch/Transformers compatibility issue; training completed and was verified independently,
-but the before/after perplexity comparison in `RESULTS.md` is incomplete as a result.
+Full fine-tuning of DistilGPT-2 on 31 Python-function training examples using HuggingFace
+`Trainer` + AdamW — data prep, tokenization, training, checkpoint save, and perplexity
+evaluation all run end to end on CPU. Validation perplexity drops from 2989.72 (base model)
+to 38.23 (fine-tuned), a full before/after comparison in `RESULTS.md`. The earlier
+checkpoint-save failure was a `requirements.txt` bug (`torch<2.2` has no wheels for
+Python 3.12), not a fundamental compatibility issue — fixed by relaxing the pin.
 LoRA and functional-correctness testing are scoped as next steps, not yet implemented.
 
 ## **03 — Agentic Performance** ⚠️ Part measured, part simulated
