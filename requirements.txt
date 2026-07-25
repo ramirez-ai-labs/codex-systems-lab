@@ -1,5 +1,9 @@
 # Core ML framework
-torch>=2.0,<2.2
+# torch<2.2 has no wheels for Python 3.12 (3.12 support started at 2.2.0),
+# so pip cannot resolve this on newer interpreters. transformers 4.x (pinned
+# below) doesn't require torch>=2.4 the way transformers 5.x does, so this
+# range covers Python 3.9-3.12 without upgrading transformers.
+torch>=2.0,<2.4
 
 # Hugging Face ecosystem
 transformers>=4.35,<4.41
